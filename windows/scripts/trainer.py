@@ -103,4 +103,4 @@ if (len_commands - correct) / len_commands > 0.5:
     # TODO: Train again
     pass
 
-# Control passes to CAI Service and script exts
+# Control passes to CAI Service and script exits
