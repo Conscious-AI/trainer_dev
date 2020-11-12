@@ -128,6 +128,8 @@ class _TrainerStartScreenState extends State<TrainerStartScreen> {
 }
 
 class TrainingScreen extends StatefulWidget {
+  final steps = 13;
+
   @override
   _TrainingScreenState createState() => _TrainingScreenState();
 }
@@ -137,41 +139,49 @@ class _TrainingScreenState extends State<TrainingScreen> {
   String status2 = '';
   String subStatus = '';
   double progressValue;
+  bool complete = false;
 
-  void handleStdout(data) {
-    if (data.toString().contains('CAI: TRAINER: H1: ')) {
-      status1 = data.toString().substring(18);
+  void handleStdout(Process proc, String data) {
+    if (data.contains('CAI: TRAINER: H1: ')) {
+      status1 = data.substring(18);
       status2 = '';
       subStatus = '';
-      //progressValue == null ? progressValue = 0.0 : progressValue += 0.2;
-    }
-    else if (data.toString().contains('CAI: TRAINER: H2: ')) {
-      status2 = data.toString().substring(18);
-    }
-    else if (data.toString().contains('Listening for ')) {
-      status1 = 'Speak ${data.toString().substring(14)}';
+      progressValue == null ? progressValue = 0.0 : progressValue += 1.0 / widget.steps;
+    } else if (data.contains('CAI: TRAINER: H2: ')) {
+      status2 = data.substring(18);
+    } else if (data.contains('Listening for ')) {
+      status1 = 'Speak ${data.substring(14)}';
       status2 = '';
       subStatus = data;
-    }
-    else if (data.toString().contains('Listening again')) {
-      status2 =  status2 + '& again...';
-    }
-    else subStatus = data;
+    } else if (data.contains('Listening again')) {
+      status2 = status2 + '& again...';
+    } else if (data.contains('CAI: TRAINER: COMPLETE')) {
+      complete = true;
+      proc.kill();
+    } else
+      subStatus = data;
+
     setState(() {});
   }
 
   void handleExit(exitCode) {
     status1 = (exitCode == 0) ? 'Training Complete !' : 'An unexpected error occured !';
+    status2 = '';
     subStatus = '';
     progressValue = 1.0;
+
     setState(() {});
+
+    // Exiting after 2 seconds delay
+    Future.delayed(const Duration(seconds: 2), () => exit(0));
   }
 
   @override
   void initState() {
     Process.start('python', ['.\\scripts\\trainer.py'], workingDirectory: '.').then((process) {
-      process.stdout.transform(utf8.decoder).listen((data) => handleStdout(data));
-      process.exitCode.then((value) => handleExit(value));
+      process.stdout.transform(utf8.decoder).listen((data) => handleStdout(process, data));
+      process.stderr.transform(utf8.decoder).listen((data) => print(data));
+      process.exitCode.then((value) => handleExit(complete ? 0 : value));
     });
     super.initState();
   }

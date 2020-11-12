@@ -3,30 +3,30 @@ import sys
 import time as t
 
 
-SCRIPTS_DIR = ["../audio_processing/", "../command_recognizer/"]
-"""
-SCRIPTS = ['dynamic_threshold.py',
-           'record_save.py',
-           'train.py',
-           'test.py',
-           'recognize_command.py']
-"""
+SCRIPTS_DIR = ["..\\audio_processing", "..\\command_recognizer"]
+
+# SCRIPTS = ["dynamic_threshold.py", "record_save.py", "train.py", "recognize_command.py"]
+
 
 for i in range(len(SCRIPTS_DIR)):
     sys.path.append(SCRIPTS_DIR[i])
 
 
-def printout(p):
-    print(f"CAI: TRAINER: {p}", file=sys.stdout)
+def printout(_str):
+    print(f"CAI: TRAINER: {_str}")
     sys.stdout.flush()
+
+
+def countdown(_num, _str):
+    for i in reversed(range(_num)):
+        printout(f"{_str} {i+1}")
+        t.sleep(1)
 
 
 printout("H1: Calibrating Microphone Threshold...Don't make any noise !")
 t.sleep(2)
 
-for i in reversed(range(5)):
-    printout(f"H2: Calibration starting in {i+1}...")
-    t.sleep(1)
+countdown(5, f"H2: Calibration starting in ...")
 
 printout("H1: Calibration Running for 10 seconds...")
 t.sleep(0.5)
@@ -53,34 +53,33 @@ import record_save
 printout("H1: Recording complete !")
 t.sleep(2)
 
-# TODO: Denoising without elevation
-# printout('H1: Populating command dataset by denoising audio files...')
-# os.chdir(SCRIPTS_DIR[0])
-# import denoiser
+printout('H1: Re-Populating command dataset by denoising audio files...')
+os.chdir(SCRIPTS_DIR[0])
+from denoiser import Denoiser
 
+dn = Denoiser()
+dn.denoise()
+
+t.sleep(2)
 printout("H1: Dataset is ready for training !")
 t.sleep(2)
 
 printout("H1: Training command model...This may take a while...")
 t.sleep(2)
 
-for i in reversed(range(5)):
-    printout(f"H2: Training commencing in {i+1}...")
-    t.sleep(1)
+countdown(5, f"H2: Model training commencing in ...")
 
 printout("H2: ")
 os.chdir(SCRIPTS_DIR[1])
 import train
 
-printout("H1: Training complete !")
+printout("H1: Model training complete !")
 t.sleep(2)
 
-printout("H1: Now lets do some validation before proceeding...")
+printout("H1: Now lets do some validation before finishing...")
 t.sleep(2)
 
-for i in reversed(range(5)):
-    printout(f"H2: Validator starting in {i+1}...")
-    t.sleep(1)
+countdown(5, f"H2: Validator starting in ...")
 
 printout("H1: Speak the commands below when 'Now Listening...' is displayed")
 
@@ -103,4 +102,6 @@ if (len_commands - correct) / len_commands > 0.5:
     # TODO: Train again
     pass
 
-# Control passes to CAI Service and script exits
+printout("H1: Validation complete ! Looks like everything's good !")
+t.sleep(2)
+printout("COMPLETE")
