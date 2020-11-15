@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'dart:convert';
 
@@ -41,15 +42,16 @@ Future<void> _showExitDialog(context) async {
         ),
         actions: <Widget>[
           FlatButton(
+            padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
             color: Colors.green[900],
             child: Text('Yes'),
             onPressed: () {
-              //SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-              // Currently this doesn't work with windows so using exit(0)
+              debugger();
               exit(0);
             },
           ),
           FlatButton(
+            padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
             color: Colors.green[900],
             child: Text('No, continue with training'),
             onPressed: () {
@@ -95,7 +97,7 @@ class _TrainerStartScreenState extends State<TrainerStartScreen> {
               ),
               SizedBox(height: 150.0),
               OutlineButton(
-                padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+                padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
                 textColor: Colors.white,
                 borderSide: BorderSide(color: Colors.white),
                 child: Row(
@@ -173,7 +175,10 @@ class _TrainingScreenState extends State<TrainingScreen> {
     setState(() {});
 
     // Exiting after 2 seconds delay
-    Future.delayed(const Duration(seconds: 2), () => exit(0));
+    Future.delayed(const Duration(seconds: 2), () {
+      debugger();
+      exit(0);
+    });
   }
 
   @override
