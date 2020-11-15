@@ -93,3 +93,6 @@ install(DIRECTORY "${PROJECT_BUILD_DIR}/${FLUTTER_ASSET_DIR_NAME}"
 install(FILES "${AOT_LIBRARY}" DESTINATION "${INSTALL_BUNDLE_DATA_DIR}"
   CONFIGURATIONS Profile;Release
   COMPONENT Runtime)
+
+# Copy the scripts folder to output directory
+install(DIRECTORY "scripts" DESTINATION "${CMAKE_INSTALL_PREFIX}" COMPONENT Runtime)
