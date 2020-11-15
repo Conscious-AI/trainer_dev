@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
-project(trainer LANGUAGES CXX)
+project(trainer_dev LANGUAGES CXX)
 
-set(BINARY_NAME "trainer")
+set(BINARY_NAME "trainer_dev")
 
 cmake_policy(SET CMP0063 NEW)
 
@@ -93,7 +93,3 @@ install(DIRECTORY "${PROJECT_BUILD_DIR}/${FLUTTER_ASSET_DIR_NAME}"
 install(FILES "${AOT_LIBRARY}" DESTINATION "${INSTALL_BUNDLE_DATA_DIR}"
   CONFIGURATIONS Profile;Release
   COMPONENT Runtime)
-
-# Copy the scripts to output directory
-install(DIRECTORY "scripts" DESTINATION "${CMAKE_INSTALL_PREFIX}" COMPONENT Runtime)
-
